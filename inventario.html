@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario de Productos - Alto Plagas Chile</title>
+    <link rel="icon" type="image/x-icon" href="img/favicon.ico">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #9e4444;
+            --primary-dark: #145620;
+            --secondary-color: #eef2ef;
+            --accent-color: #ffcf00;
+            --danger-color: #d90000;
+            --warning-color: #ffcf00;
+            --info-color: #0099ff;
+            --success-color: #28a745;
+            --text-color: #333;
+            --light-color: #fff;
+            --border-color: #ccc;
+            --shadow: 0 4px 15px rgba(0,0,0,.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body { 
+            background: var(--secondary-color); 
+            margin: 0; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* NAVBAR */
+        header {
+            background: var(--primary-color);
+            color: var(--light-color);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,.2);
+            position: fixed;
+            top: 0; 
+            width: 100%;
+            z-index: 1000;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo-img {
+            height: 60px;
+            margin-right: 12px;
+        }
+        
+        .nav-menu ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-menu ul li a {
+            text-decoration: none;
+            color: var(--light-color);
+            font-weight: 600;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        
+        .nav-menu ul li a:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* CONTENIDO */
+        .dashboard-container {
+            max-width: 1200px; 
+            margin: 120px auto 40px; 
+            padding: 30px;
+            background: var(--light-color); 
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+        
+        h2 { 
+            color: var(--primary-color); 
+            text-align: center; 
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: var(--light-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0 10px;
+            flex-grow: 1;
+            max-width: 400px;
+        }
+
+        .search-box i {
+            color: #777;
+        }
+
+        .search-box input {
+            border: none;
+            padding: 10px;
+            width: 100%;
+            outline: none;
+        }
+
+        .filter-box {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .filter-box select {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        .btn {
+            padding: 10px 18px;
+            border-radius: 6px; 
+            border: none; 
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: var(--primary-color); 
+            color: var(--light-color);
+        }
+        
+        .btn-primary:hover { 
+            background: var(--primary-dark); 
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: var(--light-color);
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: var(--light-color);
+        }
+
+        .btn-danger:hover {
+            background: #b30000;
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+            color: #333;
+        }
+
+        .btn-warning:hover {
+            background: #e6b800;
+        }
+
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        th, td {
+            border: 1px solid var(--border-color); 
+            padding: 12px 15px;
+            text-align: center; 
+            font-size: 14px;
+        }
+        
+        th { 
+            background: var(--primary-color); 
+            color: var(--light-color);
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        tr:hover {
+            background-color: #e9ecef;
+        }
+
+        .estado { 
+            padding: 6px 12px; 
+            border-radius: 20px; 
+            font-weight: bold;
+            font-size: 12px;
+            display: inline-block;
+            min-width: 100px;
+        }
+        
+        .stock-alto { 
+            background: var(--success-color); 
+            color: var(--light-color);
+        }
+        
+        .stock-medio { 
+            background: var(--warning-color); 
+            color: #333; 
+        }
+        
+        .stock-bajo { 
+            background: var(--danger-color); 
+            color: var(--light-color); 
+        }
+        
+        .agotado { 
+            background: #6c757d; 
+            color: var(--light-color); 
+        }
+
+        .categoria {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .insecticida { background: #e8f5e9; color: #2e7d32; }
+        .rodenticida { background: #fff3e0; color: #ef6c00; }
+        .fungicida { background: #e3f2fd; color: #1565c0; }
+        .repelente { background: #fce4ec; color: #c2185b; }
+        .equipo { background: #f3e5f5; color: #7b1fa2; }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-icon {
+            padding: 6px 10px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            color: var(--light-color);
+            transition: all 0.2s;
+        }
+
+        .btn-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .edit { 
+            background: var(--info-color); 
+        }
+        
+        .delete { 
+            background: var(--danger-color); 
+        }
+
+        /* TARJETAS DE RESUMEN */
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: var(--light-color);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .card h3 {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .card .value {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .card.total { border-left-color: var(--primary-color); }
+        .card.bajo-stock { border-left-color: var(--warning-color); }
+        .card.agotados { border-left-color: var(--danger-color); }
+        .card.categorias { border-left-color: var(--info-color); }
+
+        /* MODAL */
+        .modal {
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0;
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,.6);
+            justify-content: center; 
+            align-items: center;
+            z-index: 2000;
+        }
+        
+        .modal-content {
+            background: var(--light-color); 
+            padding: 30px; 
+            width: 90%;
+            max-width: 600px;
+            border-radius: 10px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,.3);
+            animation: show .3s;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        @keyframes show { 
+            from { 
+                transform: translateY(-50px); 
+                opacity: 0; 
+            } 
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .modal-title {
+            color: var(--primary-color);
+            font-size: 22px;
+            margin: 0;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #777;
+            transition: color 0.3s;
+        }
+        
+        .close-btn:hover {
+            color: var(--danger-color);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        input, select, textarea {
+            width: 100%; 
+            padding: 10px; 
+            border-radius: 5px;
+            border: 1px solid var(--border-color); 
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+        
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 10px;
+            }
+            
+            .logo {
+                margin-bottom: 10px;
+            }
+            
+            .nav-menu ul {
+                gap: 10px;
+            }
+            
+            .dashboard-container {
+                margin: 150px 15px 20px;
+                padding: 20px;
+            }
+            
+            .page-header, .controls {
+                flex-direction: column;
+            }
+            
+            .search-box, .filter-box {
+                max-width: 100%;
+                width: 100%;
+            }
+            
+            .filter-box {
+                flex-wrap: wrap;
+            }
+            
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            th, td {
+                padding: 8px 10px;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+
+        /* NOTIFICACIONES */
+        .notification {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 6px;
+            color: var(--light-color);
+            font-weight: 600;
+            z-index: 3000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateX(150%);
+            transition: transform 0.3s;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            background: var(--success-color);
+        }
+        
+        .notification.error {
+            background: var(--danger-color);
+        }
+        
+        .notification.info {
+            background: var(--info-color);
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">
+        <img src="img/logo.png" class="logo-img" alt="Logo Alto Plagas Chile">
+        <h1 style="font-size: 20px;">Alto Plagas Chile</h1>
+    </div>
+    <nav class="nav-menu">
+        <ul>
+            <li><a href="#"><i class="fas fa-boxes"></i> Inventario</a></li>
+            <li><a href="index.html"><i class="fas fa-globe"></i> Sitio Web</a></li>
+            <li><a href="seguimiento.html"><i class="fas fa-globe"></i> Seguimiento</a></li>
+            <li><a href="login.html"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
+        </ul>
+    </nav>
+</header>
+
+<section class="dashboard-container">
+    <div class="page-header">
+        <h2>Inventario de Productos</h2>
+        <button class="btn btn-primary" onclick="openModal()">
+            <i class="fas fa-plus"></i> Nuevo Producto
+        </button>
+    </div>
+
+    <!-- Tarjetas de resumen -->
+    <div class="summary-cards">
+        <div class="card total">
+            <h3>Total Productos</h3>
+            <div class="value" id="totalProductos">0</div>
+        </div>
+        <div class="card bajo-stock">
+            <h3>Bajo Stock</h3>
+            <div class="value" id="bajoStock">0</div>
+        </div>
+        <div class="card agotados">
+            <h3>Agotados</h3>
+            <div class="value" id="agotados">0</div>
+        </div>
+        <div class="card categorias">
+            <h3>Categorías</h3>
+            <div class="value" id="totalCategorias">0</div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Buscar productos...">
+        </div>
+        <div class="filter-box">
+            <select id="filterCategoria">
+                <option value="">Todas las categorías</option>
+                <option value="Insecticida">Insecticida</option>
+                <option value="Rodenticida">Rodenticida</option>
+                <option value="Fungicida">Fungicida</option>
+                <option value="Repelente">Repelente</option>
+                <option value="Equipo">Equipo</option>
+            </select>
+            <select id="filterStock">
+                <option value="">Todos los estados</option>
+                <option value="stock-alto">Stock Alto</option>
+                <option value="stock-medio">Stock Medio</option>
+                <option value="stock-bajo">Stock Bajo</option>
+                <option value="agotado">Agotado</option>
+            </select>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Producto</th>
+            <th>Categoría</th>
+            <th>Stock</th>
+            <th>Stock Mínimo</th>
+            <th>Precio</th>
+            <th>Proveedor</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody id="tablaBody"></tbody>
+    </table>
+</section>
+
+<!-- MODAL CRUD -->
+<div class="modal" id="modalForm" onclick="closeModalOnOutsideClick(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h3 class="modal-title" id="modalTitle">Nuevo Producto</h3>
+            <button class="close-btn" onclick="closeModal()">&times;</button>
+        </div>
+        
+        <input type="hidden" id="editId">
+        
+        <div class="form-group">
+            <label for="nombre">Nombre del Producto</label>
+            <input type="text" id="nombre" placeholder="Nombre del producto" required>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="categoria">Categoría</label>
+                <select id="categoria" required>
+                    <option value="">Seleccione una categoría</option>
+                    <option value="Insecticida">Insecticida</option>
+                    <option value="Rodenticida">Rodenticida</option>
+                    <option value="Fungicida">Fungicida</option>
+                    <option value="Repelente">Repelente</option>
+                    <option value="Equipo">Equipo</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="proveedor">Proveedor</label>
+                <input type="text" id="proveedor" placeholder="Nombre del proveedor" required>
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="stock">Stock Actual</label>
+                <input type="number" id="stock" min="0" placeholder="Cantidad en stock" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="stockMinimo">Stock Mínimo</label>
+                <input type="number" id="stockMinimo" min="0" placeholder="Stock mínimo requerido" required>
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="precio">Precio Unitario ($)</label>
+                <input type="number" id="precio" min="0" step="0.01" placeholder="Precio por unidad" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="unidad">Unidad de Medida</label>
+                <select id="unidad" required>
+                    <option value="">Seleccione unidad</option>
+                    <option value="Litros">Litros</option>
+                    <option value="Kilogramos">Kilogramos</option>
+                    <option value="Unidades">Unidades</option>
+                    <option value="Cajas">Cajas</option>
+                    <option value="Paquetes">Paquetes</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="descripcion">Descripción</label>
+            <textarea id="descripcion" placeholder="Descripción del producto"></textarea>
+        </div>
+
+        <div class="form-actions">
+            <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+            <button class="btn btn-primary" onclick="guardar()">Guardar Producto</button>
+        </div>
+    </div>
+</div>
+
+<!-- NOTIFICACIONES -->
+<div class="notification" id="notification"></div>
+
+<script>
+// Variables globales
+let productos = JSON.parse(localStorage.getItem("productos")) || [
+    {
+        id: 1,
+        nombre: "Insecticida ABC Pro", 
+        categoria: "Insecticida", 
+        stock: 45,
+        stockMinimo: 10,
+        precio: 25.50,
+        proveedor: "Química Chile S.A.",
+        unidad: "Litros",
+        descripcion: "Insecticida de amplio espectro para control de insectos voladores y rastreros."
+    },
+    {
+        id: 2,
+        nombre: "Rodenticida MaxRat", 
+        categoria: "Rodenticida", 
+        stock: 8,
+        stockMinimo: 15,
+        precio: 18.75,
+        proveedor: "Control Pest Ltda.",
+        unidad: "Kilogramos",
+        descripcion: "Cebo rodenticida anticoagulante para control de ratas y ratones."
+    },
+    {
+        id: 3,
+        nombre: "Fungicida Total", 
+        categoria: "Fungicida", 
+        stock: 22,
+        stockMinimo: 5,
+        precio: 32.00,
+        proveedor: "AgroQuímica Nacional",
+        unidad: "Litros",
+        descripcion: "Fungicida sistémico para control de hongos en áreas húmedas."
+    },
+    {
+        id: 4,
+        nombre: "Repelente Ultra", 
+        categoria: "Repelente", 
+        stock: 0,
+        stockMinimo: 8,
+        precio: 15.25,
+        proveedor: "BioProtect S.A.",
+        unidad: "Unidades",
+        descripcion: "Repelente natural para insectos, ideal para uso en interiores."
+    },
+    {
+        id: 5,
+        nombre: "Equipo Fumigación Pro", 
+        categoria: "Equipo", 
+        stock: 3,
+        stockMinimo: 2,
+        precio: 289.99,
+        proveedor: "TecnoFumigación",
+        unidad: "Unidades",
+        descripcion: "Equipo de fumigación profesional con capacidad de 20 litros."
+    }
+];
+
+let nextId = productos.length > 0 ? Math.max(...productos.map(p => p.id)) + 1 : 1;
+
+// Inicialización
+document.addEventListener('DOMContentLoaded', function() {
+    renderTable();
+    updateSummaryCards();
+    
+    // Configurar búsqueda
+    document.getElementById('searchInput').addEventListener('input', function() {
+        filterTable(this.value);
+    });
+    
+    // Configurar filtros
+    document.getElementById('filterCategoria').addEventListener('change', filterTable);
+    document.getElementById('filterStock').addEventListener('change', filterTable);
+    
+    // Cerrar modal con tecla Escape
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeModal();
+        }
+    });
+});
+
+// Funciones principales
+function renderTable(productosFiltrados = null) {
+    const tabla = document.getElementById("tablaBody");
+    const data = productosFiltrados || productos;
+    
+    tabla.innerHTML = "";
+    
+    if (data.length === 0) {
+        tabla.innerHTML = `<tr><td colspan="9" style="text-align: center; padding: 20px;">No se encontraron productos</td></tr>`;
+        return;
+    }
+    
+    data.forEach((p, i) => {
+        // Determinar estado del stock
+        let estadoClass, estadoTexto;
+        if (p.stock === 0) {
+            estadoClass = "agotado";
+            estadoTexto = "Agotado";
+        } else if (p.stock <= p.stockMinimo) {
+            estadoClass = "stock-bajo";
+            estadoTexto = "Stock Bajo";
+        } else if (p.stock <= p.stockMinimo * 2) {
+            estadoClass = "stock-medio";
+            estadoTexto = "Stock Medio";
+        } else {
+            estadoClass = "stock-alto";
+            estadoTexto = "Stock Alto";
+        }
+        
+        tabla.innerHTML += `
+        <tr>
+            <td>${p.id}</td>
+            <td style="text-align: left;">${p.nombre}</td>
+            <td><span class="categoria ${p.categoria.toLowerCase()}">${p.categoria}</span></td>
+            <td>${p.stock} ${p.unidad}</td>
+            <td>${p.stockMinimo} ${p.unidad}</td>
+            <td>$${p.precio.toFixed(2)}</td>
+            <td>${p.proveedor}</td>
+            <td><span class="estado ${estadoClass}">${estadoTexto}</span></td>
+            <td>
+                <div class="actions">
+                    <button class="btn-icon edit" onclick="edit(${p.id})" title="Editar">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn-icon delete" onclick="del(${p.id})" title="Eliminar">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>`;
+    });
+}
+
+function filterTable() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const categoriaFilter = document.getElementById('filterCategoria').value;
+    const stockFilter = document.getElementById('filterStock').value;
+    
+    const filtered = productos.filter(p => {
+        // Filtro por búsqueda
+        const matchesSearch = !searchTerm || 
+            p.nombre.toLowerCase().includes(searchTerm) ||
+            p.proveedor.toLowerCase().includes(searchTerm) ||
+            p.descripcion.toLowerCase().includes(searchTerm);
+        
+        // Filtro por categoría
+        const matchesCategoria = !categoriaFilter || p.categoria === categoriaFilter;
+        
+        // Filtro por estado de stock
+        let matchesStock = true;
+        if (stockFilter) {
+            if (stockFilter === "agotado") {
+                matchesStock = p.stock === 0;
+            } else if (stockFilter === "stock-bajo") {
+                matchesStock = p.stock > 0 && p.stock <= p.stockMinimo;
+            } else if (stockFilter === "stock-medio") {
+                matchesStock = p.stock > p.stockMinimo && p.stock <= p.stockMinimo * 2;
+            } else if (stockFilter === "stock-alto") {
+                matchesStock = p.stock > p.stockMinimo * 2;
+            }
+        }
+        
+        return matchesSearch && matchesCategoria && matchesStock;
+    });
+    
+    renderTable(filtered);
+}
+
+function updateSummaryCards() {
+    const totalProductos = productos.length;
+    const bajoStock = productos.filter(p => p.stock > 0 && p.stock <= p.stockMinimo).length;
+    const agotados = productos.filter(p => p.stock === 0).length;
+    const categorias = [...new Set(productos.map(p => p.categoria))].length;
+    
+    document.getElementById('totalProductos').textContent = totalProductos;
+    document.getElementById('bajoStock').textContent = bajoStock;
+    document.getElementById('agotados').textContent = agotados;
+    document.getElementById('totalCategorias').textContent = categorias;
+}
+
+function openModal(edit = false) {
+    document.getElementById("modalForm").style.display = "flex";
+    document.getElementById("modalTitle").innerText = edit ? "Editar Producto" : "Nuevo Producto";
+}
+
+function closeModal() {
+    document.getElementById("modalForm").style.display = "none";
+    resetForm();
+}
+
+function closeModalOnOutsideClick(event) {
+    if (event.target === document.getElementById("modalForm")) {
+        closeModal();
+    }
+}
+
+function resetForm() {
+    document.getElementById("editId").value = "";
+    document.getElementById("nombre").value = "";
+    document.getElementById("categoria").value = "";
+    document.getElementById("proveedor").value = "";
+    document.getElementById("stock").value = "";
+    document.getElementById("stockMinimo").value = "";
+    document.getElementById("precio").value = "";
+    document.getElementById("unidad").value = "";
+    document.getElementById("descripcion").value = "";
+}
+
+function guardar() {
+    const id = document.getElementById("editId").value;
+    const data = {
+        id: id ? parseInt(id) : nextId++,
+        nombre: document.getElementById("nombre").value.trim(),
+        categoria: document.getElementById("categoria").value,
+        proveedor: document.getElementById("proveedor").value.trim(),
+        stock: parseInt(document.getElementById("stock").value),
+        stockMinimo: parseInt(document.getElementById("stockMinimo").value),
+        precio: parseFloat(document.getElementById("precio").value),
+        unidad: document.getElementById("unidad").value,
+        descripcion: document.getElementById("descripcion").value.trim()
+    };
+
+    // Validaciones básicas
+    if (!data.nombre || !data.categoria || !data.proveedor || isNaN(data.stock) || 
+        isNaN(data.stockMinimo) || isNaN(data.precio) || !data.unidad) {
+        showNotification('Por favor, complete todos los campos obligatorios', 'error');
+        return;
+    }
+
+    if (data.stock < 0 || data.stockMinimo < 0 || data.precio < 0) {
+        showNotification('Los valores numéricos no pueden ser negativos', 'error');
+        return;
+    }
+
+    if (id) {
+        // Editar producto existente
+        const index = productos.findIndex(p => p.id === parseInt(id));
+        if (index !== -1) {
+            productos[index] = data;
+            showNotification('Producto actualizado correctamente', 'success');
+        }
+    } else {
+        // Nuevo producto
+        productos.push(data);
+        showNotification('Producto creado correctamente', 'success');
+    }
+
+    localStorage.setItem("productos", JSON.stringify(productos));
+    renderTable();
+    updateSummaryCards();
+    closeModal();
+}
+
+function edit(id) {
+    const producto = productos.find(p => p.id === id);
+    if (!producto) return;
+    
+    document.getElementById("editId").value = producto.id;
+    document.getElementById("nombre").value = producto.nombre;
+    document.getElementById("categoria").value = producto.categoria;
+    document.getElementById("proveedor").value = producto.proveedor;
+    document.getElementById("stock").value = producto.stock;
+    document.getElementById("stockMinimo").value = producto.stockMinimo;
+    document.getElementById("precio").value = producto.precio;
+    document.getElementById("unidad").value = producto.unidad;
+    document.getElementById("descripcion").value = producto.descripcion || "";
+    
+    openModal(true);
+}
+
+function del(id) {
+    if (confirm("¿Está seguro de que desea eliminar este producto?")) {
+        productos = productos.filter(p => p.id !== id);
+        localStorage.setItem("productos", JSON.stringify(productos));
+        renderTable();
+        updateSummaryCards();
+        showNotification('Producto eliminado correctamente', 'success');
+    }
+}
+
+// Funciones auxiliares
+function showNotification(message, type = 'info') {
+    const notification = document.getElementById('notification');
+    notification.textContent = message;
+    notification.className = `notification ${type} show`;
+    
+    setTimeout(() => {
+        notification.classList.remove('show');
+    }, 3000);
+}
+</script>
+
+</body>
+</html>

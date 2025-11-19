@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Envíos y Servicios - Alto Plagas Chile</title>
+    <link rel="icon" type="image/x-icon" href="img/favicon.ico">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-color: #c95555;
+            --primary-dark: #145620;
+            --secondary-color: #eef2ef;
+            --accent-color: #ffcf00;
+            --danger-color: #d90000;
+            --warning-color: #ffcf00;
+            --info-color: #0099ff;
+            --success-color: #28a745;
+            --text-color: #333;
+            --light-color: #fff;
+            --border-color: #ccc;
+            --shadow: 0 4px 15px rgba(0,0,0,.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body { 
+            background: var(--secondary-color); 
+            margin: 0; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* NAVBAR */
+        header {
+            background: var(--primary-color);
+            color: var(--light-color);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,.2);
+            position: fixed;
+            top: 0; 
+            width: 100%;
+            z-index: 1000;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo-img {
+            height: 60px;
+            margin-right: 12px;
+        }
+        
+        .nav-menu ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-menu ul li a {
+            text-decoration: none;
+            color: var(--light-color);
+            font-weight: 600;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        
+        .nav-menu ul li a:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* CONTENIDO */
+        .dashboard-container {
+            max-width: 1200px; 
+            margin: 120px auto 40px; 
+            padding: 30px;
+            background: var(--light-color); 
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+        
+        h2 { 
+            color: var(--primary-color); 
+            text-align: center; 
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: var(--light-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0 10px;
+            flex-grow: 1;
+            max-width: 400px;
+        }
+
+        .search-box i {
+            color: #777;
+        }
+
+        .search-box input {
+            border: none;
+            padding: 10px;
+            width: 100%;
+            outline: none;
+        }
+
+        .btn {
+            padding: 10px 18px;
+            border-radius: 6px; 
+            border: none; 
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: var(--primary-color); 
+            color: var(--light-color);
+        }
+        
+        .btn-primary:hover { 
+            background: var(--primary-dark); 
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: var(--light-color);
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: var(--light-color);
+        }
+
+        .btn-danger:hover {
+            background: #b30000;
+        }
+
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        th, td {
+            border: 1px solid var(--border-color); 
+            padding: 12px 15px;
+            text-align: center; 
+            font-size: 14px;
+        }
+        
+        th { 
+            background: var(--primary-color); 
+            color: var(--light-color);
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        tr:hover {
+            background-color: #e9ecef;
+        }
+
+        .estado { 
+            padding: 6px 12px; 
+            border-radius: 20px; 
+            font-weight: bold;
+            font-size: 12px;
+            display: inline-block;
+            min-width: 100px;
+        }
+        
+        .pendiente { 
+            background: var(--warning-color); 
+            color: #333;
+        }
+        
+        .enproceso { 
+            background: var(--info-color); 
+            color: var(--light-color); 
+        }
+        
+        .completado { 
+            background: var(--success-color); 
+            color: var(--light-color); 
+        }
+        
+        .cancelado { 
+            background: var(--danger-color); 
+            color: var(--light-color); 
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-icon {
+            padding: 6px 10px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            color: var(--light-color);
+            transition: all 0.2s;
+        }
+
+        .btn-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .edit { 
+            background: var(--info-color); 
+        }
+        
+        .delete { 
+            background: var(--danger-color); 
+        }
+
+        /* MODAL */
+        .modal {
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0;
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,.6);
+            justify-content: center; 
+            align-items: center;
+            z-index: 2000;
+        }
+        
+        .modal-content {
+            background: var(--light-color); 
+            padding: 30px; 
+            width: 90%;
+            max-width: 500px;
+            border-radius: 10px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,.3);
+            animation: show .3s;
+            position: relative;
+        }
+        
+        @keyframes show { 
+            from { 
+                transform: translateY(-50px); 
+                opacity: 0; 
+            } 
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .modal-title {
+            color: var(--primary-color);
+            font-size: 22px;
+            margin: 0;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #777;
+            transition: color 0.3s;
+        }
+        
+        .close-btn:hover {
+            color: var(--danger-color);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        input, select, textarea {
+            width: 100%; 
+            padding: 10px; 
+            border-radius: 5px;
+            border: 1px solid var(--border-color); 
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+        
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 10px;
+            }
+            
+            .logo {
+                margin-bottom: 10px;
+            }
+            
+            .nav-menu ul {
+                gap: 10px;
+            }
+            
+            .dashboard-container {
+                margin: 150px 15px 20px;
+                padding: 20px;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            .search-box {
+                max-width: 100%;
+            }
+            
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            th, td {
+                padding: 8px 10px;
+            }
+        }
+
+        /* NOTIFICACIONES */
+        .notification {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 6px;
+            color: var(--light-color);
+            font-weight: 600;
+            z-index: 3000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateX(150%);
+            transition: transform 0.3s;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            background: var(--success-color);
+        }
+        
+        .notification.error {
+            background: var(--danger-color);
+        }
+        
+        .notification.info {
+            background: var(--info-color);
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">
+        <img src="img/logo.png" class="logo-img" alt="Logo Alto Plagas Chile">
+        <h1 style="font-size: 20px;">Alto Plagas Chile</h1>
+    </div>
+    <nav class="nav-menu">
+        <ul>
+            <li><a href="#"><i class="fas fa-user-shield"></i> Acceso Administrador</a></li>
+            <li><a href="index.html"><i class="fas fa-globe"></i> Sitio Web</a></li>
+            <li><a href="inventario.html"><i class="fas fa-globe"></i>Inventario</a></li>
+            <li><a href="seguimiento.html"><i class="fas fa-globe"></i>Seguimiento</a></li>
+            <li><a href="login.html"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
+        </ul>
+    </nav>
+</header>
+
+<section class="dashboard-container">
+    <h2>Control de Envíos y Servicios</h2>
+
+    <div class="controls">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Buscar servicios...">
+        </div>
+        <button class="btn btn-primary" onclick="openModal()">
+            <i class="fas fa-plus"></i> Nuevo Servicio
+        </button>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>Teléfono</th>
+            <th>Servicio</th>
+            <th>Técnico</th>
+            <th>Fecha</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody id="tablaBody"></tbody>
+    </table>
+</section>
+
+<!-- MODAL CRUD -->
+<div class="modal" id="modalForm" onclick="closeModalOnOutsideClick(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h3 class="modal-title" id="modalTitle">Nuevo Servicio</h3>
+            <button class="close-btn" onclick="closeModal()">&times;</button>
+        </div>
+        
+        <input type="hidden" id="editId">
+        
+        <div class="form-group">
+            <label for="cliente">Cliente</label>
+            <input type="text" id="cliente" placeholder="Nombre del cliente" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="telefono">Teléfono</label>
+            <input type="text" id="telefono" placeholder="Número de teléfono" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="servicio">Servicio</label>
+            <select id="servicio" required>
+                <option value="">Seleccione un servicio</option>
+                <option value="Desratización">Desratización</option>
+                <option value="Fumigación">Fumigación</option>
+                <option value="Control de Plagas">Control de Plagas</option>
+                <option value="Desinfección">Desinfección</option>
+                <option value="Otro">Otro</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="tecnico">Técnico Asignado</label>
+            <select id="tecnico" required>
+                <option value="">Seleccione un técnico</option>
+                <option value="Andrés López">Andrés López</option>
+                <option value="Carlos Díaz">Carlos Díaz</option>
+                <option value="María González">María González</option>
+                <option value="Roberto Silva">Roberto Silva</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="direccion">Dirección</label>
+            <textarea id="direccion" placeholder="Dirección completa" required></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="fecha">Fecha del Servicio</label>
+            <input type="date" id="fecha" required>
+        </div>
+
+        <div class="form-group">
+            <label for="estado">Estado</label>
+            <select id="estado" required>
+                <option value="Pendiente">Pendiente</option>
+                <option value="En Proceso">En Proceso</option>
+                <option value="Completado">Completado</option>
+                <option value="Cancelado">Cancelado</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="notas">Notas Adicionales</label>
+            <textarea id="notas" placeholder="Información adicional del servicio"></textarea>
+        </div>
+
+        <div class="form-actions">
+            <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+            <button class="btn btn-primary" onclick="guardar()">Guardar Servicio</button>
+        </div>
+    </div>
+</div>
+
+<!-- NOTIFICACIONES -->
+<div class="notification" id="notification"></div>
+
+<script>
+// Variables globales
+let servicios = JSON.parse(localStorage.getItem("servicios")) || [
+    {
+        id: 1,
+        cliente: "Juan Pérez", 
+        telefono: "912345678", 
+        servicio: "Desratización", 
+        tecnico: "Andrés López", 
+        direccion: "Av. Las Flores 223, Santiago", 
+        fecha: "2025-11-20", 
+        estado: "Pendiente",
+        notas: "Cliente solicita servicio en horario de tarde"
+    },
+    {
+        id: 2,
+        cliente: "María López", 
+        telefono: "987654321", 
+        servicio: "Fumigación", 
+        tecnico: "Carlos Díaz", 
+        direccion: "Calle Norte 447, Providencia", 
+        fecha: "2025-11-22", 
+        estado: "En Proceso",
+        notas: "Segunda visita de control"
+    }
+];
+
+let nextId = servicios.length > 0 ? Math.max(...servicios.map(s => s.id)) + 1 : 1;
+
+// Inicialización
+document.addEventListener('DOMContentLoaded', function() {
+    renderTable();
+    
+    // Configurar búsqueda
+    document.getElementById('searchInput').addEventListener('input', function() {
+        filterTable(this.value);
+    });
+    
+    // Configurar fecha mínima para el campo de fecha
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('fecha').min = today;
+    
+    // Cerrar modal con tecla Escape
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeModal();
+        }
+    });
+});
+
+// Funciones principales
+function renderTable(serviciosFiltrados = null) {
+    const tabla = document.getElementById("tablaBody");
+    const data = serviciosFiltrados || servicios;
+    
+    tabla.innerHTML = "";
+    
+    if (data.length === 0) {
+        tabla.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 20px;">No se encontraron servicios</td></tr>`;
+        return;
+    }
+    
+    data.forEach((s, i) => {
+        const estadoClass = s.estado.toLowerCase().replace(' ', '');
+        tabla.innerHTML += `
+        <tr>
+            <td>${s.id}</td>
+            <td>${s.cliente}</td>
+            <td>${s.telefono}</td>
+            <td>${s.servicio}</td>
+            <td>${s.tecnico}</td>
+            <td>${formatDate(s.fecha)}</td>
+            <td><span class="estado ${estadoClass}">${s.estado}</span></td>
+            <td>
+                <div class="actions">
+                    <button class="btn-icon edit" onclick="edit(${s.id})" title="Editar">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn-icon delete" onclick="del(${s.id})" title="Eliminar">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>`;
+    });
+}
+
+function filterTable(searchTerm) {
+    if (!searchTerm) {
+        renderTable();
+        return;
+    }
+    
+    const filtered = servicios.filter(s => 
+        s.cliente.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        s.servicio.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        s.tecnico.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        s.direccion.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    
+    renderTable(filtered);
+}
+
+function openModal(edit = false) {
+    document.getElementById("modalForm").style.display = "flex";
+    document.getElementById("modalTitle").innerText = edit ? "Editar Servicio" : "Nuevo Servicio";
+}
+
+function closeModal() {
+    document.getElementById("modalForm").style.display = "none";
+    resetForm();
+}
+
+function closeModalOnOutsideClick(event) {
+    if (event.target === document.getElementById("modalForm")) {
+        closeModal();
+    }
+}
+
+function resetForm() {
+    document.getElementById("editId").value = "";
+    document.getElementById("cliente").value = "";
+    document.getElementById("telefono").value = "";
+    document.getElementById("servicio").value = "";
+    document.getElementById("tecnico").value = "";
+    document.getElementById("direccion").value = "";
+    document.getElementById("fecha").value = "";
+    document.getElementById("estado").value = "Pendiente";
+    document.getElementById("notas").value = "";
+}
+
+function guardar() {
+    const id = document.getElementById("editId").value;
+    const data = {
+        id: id ? parseInt(id) : nextId++,
+        cliente: document.getElementById("cliente").value.trim(),
+        telefono: document.getElementById("telefono").value.trim(),
+        servicio: document.getElementById("servicio").value,
+        tecnico: document.getElementById("tecnico").value,
+        direccion: document.getElementById("direccion").value.trim(),
+        fecha: document.getElementById("fecha").value,
+        estado: document.getElementById("estado").value,
+        notas: document.getElementById("notas").value.trim()
+    };
+
+    // Validaciones básicas
+    if (!data.cliente || !data.telefono || !data.servicio || !data.tecnico || !data.direccion || !data.fecha) {
+        showNotification('Por favor, complete todos los campos obligatorios', 'error');
+        return;
+    }
+
+    if (id) {
+        // Editar servicio existente
+        const index = servicios.findIndex(s => s.id === parseInt(id));
+        if (index !== -1) {
+            servicios[index] = data;
+            showNotification('Servicio actualizado correctamente', 'success');
+        }
+    } else {
+        // Nuevo servicio
+        servicios.push(data);
+        showNotification('Servicio creado correctamente', 'success');
+    }
+
+    localStorage.setItem("servicios", JSON.stringify(servicios));
+    renderTable();
+    closeModal();
+}
+
+function edit(id) {
+    const servicio = servicios.find(s => s.id === id);
+    if (!servicio) return;
+    
+    document.getElementById("editId").value = servicio.id;
+    document.getElementById("cliente").value = servicio.cliente;
+    document.getElementById("telefono").value = servicio.telefono;
+    document.getElementById("servicio").value = servicio.servicio;
+    document.getElementById("tecnico").value = servicio.tecnico;
+    document.getElementById("direccion").value = servicio.direccion;
+    document.getElementById("fecha").value = servicio.fecha;
+    document.getElementById("estado").value = servicio.estado;
+    document.getElementById("notas").value = servicio.notas || "";
+    
+    openModal(true);
+}
+
+function del(id) {
+    if (confirm("¿Está seguro de que desea eliminar este servicio?")) {
+        servicios = servicios.filter(s => s.id !== id);
+        localStorage.setItem("servicios", JSON.stringify(servicios));
+        renderTable();
+        showNotification('Servicio eliminado correctamente', 'success');
+    }
+}
+
+// Funciones auxiliares
+function formatDate(dateString) {
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString('es-ES', options);
+}
+
+function showNotification(message, type = 'info') {
+    const notification = document.getElementById('notification');
+    notification.textContent = message;
+    notification.className = `notification ${type} show`;
+    
+    setTimeout(() => {
+        notification.classList.remove('show');
+    }, 3000);
+}
+</script>
+
+</body>
+</html>
